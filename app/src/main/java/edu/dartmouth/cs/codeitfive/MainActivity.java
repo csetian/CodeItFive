@@ -46,30 +46,27 @@ public class MainActivity extends Activity {
         Log.d(TAG, "bottle init pos " + BOTTLE_START_X+","+BOTTLE_START_X);
         old = BOTTLE_START_X + BOTTLE_START_Y;
         old_y = BOTTLE_START_Y;
-        bottle.setOnTouchListener(new View.OnTouchListener() {
+
+        bottle.setOnTouchListener(new View.OnTouchListener()
+        {
+            private PointF DownPT = new PointF(); // Record Mouse Position When Pressed Down
+            private PointF StartPT = new PointF(); // Record Start Position of 'img'
+
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                float x, y;
-                PointF DownPT = new PointF(); // Record Mouse Position When Pressed Down
-                PointF StartPT = new PointF(); // Record Start Position of 'img'
+            public boolean onTouch(View v, MotionEvent event)
+            {
                 int eid = event.getAction();
                 switch (eid)
                 {
                     case MotionEvent.ACTION_MOVE :
                         PointF mv = new PointF( event.getX() - DownPT.x, event.getY() - DownPT.y);
-                        bottle.setX((int) (StartPT.x + mv.x));
-                        bottle.setY((int) (StartPT.y + mv.y));
-                        previous_point = StartPT;
+                        bottle.setY((int)(StartPT.y+mv.y));
                         StartPT = new PointF( bottle.getX(), bottle.getY() );
-                        Log.d(TAG, "ACTION MOVE event at pos " +mv.x+","+mv.y);
-                        checkDirectionChange(previous_point, StartPT);
                         break;
                     case MotionEvent.ACTION_DOWN :
                         DownPT.x = event.getX();
                         DownPT.y = event.getY();
                         StartPT = new PointF( bottle.getX(), bottle.getY() );
-                        Log.d(TAG, "ACTION DOWN event at pos " +DownPT.x+","+DownPT.y);
-
                         break;
                     case MotionEvent.ACTION_UP :
                         // Nothing have to do
@@ -77,6 +74,11 @@ public class MainActivity extends Activity {
                     default :
                         break;
                 }
+                return true;
+            }
+        });
+
+
                /* Log.d(TAG, "bottle has been touched!");
                 switch (event.getAction()){
                     case MotionEvent.ACTION_DOWN:
@@ -126,16 +128,16 @@ public class MainActivity extends Activity {
                     bottle.setY(BOTTLE_START_Y);
                 }
                 */
-                return true;
-            }
-        });
+//                return true;
+//            }
+//        });
+//
+//    }
 
-    }
-
-    private void checkDirectionChange(PointF p1, PointF p2) {
-        if (p2.y > (p1.y + 75)){
-
-        }
+//    private void checkDirectionChange(PointF p1, PointF p2) {
+//        if (p2.y > (p1.y + 75)){
+//
+//        }
     }
 
 
