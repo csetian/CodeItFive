@@ -19,10 +19,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/background_dark"
-        android:id="@+id/uiView"
-        android:alpha="0.7" >
-
+        android:id="@+id/uiView" >
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
