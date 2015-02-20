@@ -73,10 +73,10 @@ public class MainActivity extends Activity {
             public boolean onTouch(View v, MotionEvent event) {
                 int eid = event.getAction();
                 long ctime = System.currentTimeMillis();
-                if (ctime - startTime > 100){
+                if (ctime - startTime > 50){
                     Log.d(TAG, "time difference!");
-                    if (distance_moved > 200){
-                        Global.backYScale+=0.05;
+                    if (distance_moved > 100){
+                        Global.backYScale+=0.025;
                         if (Global.backYScale>=.99){
                             wonGame();
                         }
