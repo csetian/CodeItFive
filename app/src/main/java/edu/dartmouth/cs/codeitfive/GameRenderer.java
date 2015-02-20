@@ -8,9 +8,6 @@ import javax.microedition.khronos.opengles.GL10;
 public class GameRenderer implements Renderer{
 
     private TexBack back = new TexBack();
-
-    private float backYScale = 0.0f;
-
     private long loopStart = 0;
     private long loopEnd = 0;
     private long loopRunTime = 0;
@@ -28,7 +25,7 @@ public class GameRenderer implements Renderer{
         }
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-        backYScale = backYScale + 0.05f * (1.0f - backYScale);
+        Global.backYScale = Global.backYScale + 0.05f * (1.0f - Global.backYScale);
         drawBack(gl);
 
         gl.glEnable(GL10.GL_BLEND);
@@ -55,7 +52,7 @@ public class GameRenderer implements Renderer{
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glLoadIdentity();
         gl.glPushMatrix();
-        gl.glScalef(1f, backYScale, 1f);
+        gl.glScalef(1f, Global.backYScale, 1f);
         gl.glTranslatef(0f, 0f, 0f);
 
         gl.glMatrixMode(GL10.GL_TEXTURE);

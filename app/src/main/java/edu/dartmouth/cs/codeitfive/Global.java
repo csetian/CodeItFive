@@ -10,4 +10,5 @@ public class Global {
 
     public static int GAME_SCREEN_WIDTH = 0;
     public static int GAME_SCREEN_HEIGHT = 0;
+    public static float backYScale = 0f;
 }
