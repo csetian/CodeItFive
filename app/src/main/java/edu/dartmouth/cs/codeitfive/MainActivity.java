@@ -104,6 +104,7 @@ public class MainActivity extends Activity {
                         break;
                     case MotionEvent.ACTION_UP:
                         // Nothing have to do
+                        Global.backYScale = 0;
                         break;
                     default:
                         break;
