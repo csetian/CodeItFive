@@ -25,7 +25,7 @@ public class GameRenderer implements Renderer{
         }
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-        Global.backYScale = Global.backYScale + 0.05f * (1.0f - Global.backYScale);
+        Global.backYScale = 0.25f;
         drawBack(gl);
 
         gl.glEnable(GL10.GL_BLEND);
@@ -45,7 +45,6 @@ public class GameRenderer implements Renderer{
 
         // Load textures
         back.loadTexture(gl, Global.BACK , Global.context);
-
 	}
 
     public void drawBack(GL10 gl){

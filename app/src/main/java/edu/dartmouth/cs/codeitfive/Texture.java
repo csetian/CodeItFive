@@ -76,7 +76,7 @@ public class Texture {
         gl.glDisable(GL10.GL_CULL_FACE);
     }
 
-    public void loadTexture(GL10 gl,int texture, Context context){
+    public void loadTexture(GL10 gl, int texture, Context context){
         InputStream imagestream = context.getResources().openRawResource(texture);
         Bitmap bitmap = null;
         try {

@@ -10,7 +10,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
@@ -37,51 +39,65 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         Global.context = getApplicationContext();
 
-//        setContentView(R.layout.activity_main);
-//        start_button = (Button) findViewById(R.id.button_start);
-//
-//        shake_it = (TextView) findViewById(R.id.shakeIttextView);
-//        best_time = (TextView) findViewById(R.id.textView);
-//
-//        timer = (Chronometer) findViewById(R.id.chronometer);
-//
-//        bottle = (ImageView) findViewById(R.id.cokeBottle);
-//        BOTTLE_START_X = bottle.getX();
-//        BOTTLE_START_Y = bottle.getY();
-//        Log.d(TAG, "bottle init pos " + BOTTLE_START_X + "," + BOTTLE_START_X);
-//        old = BOTTLE_START_X + BOTTLE_START_Y;
-//        old_y = BOTTLE_START_Y;
-//
-//        bottle.setOnTouchListener(new View.OnTouchListener() {
-//            private PointF DownPT = new PointF(); // Record Mouse Position When Pressed Down
-//            private PointF StartPT = new PointF(); // Record Start Position of 'img'
-//
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                int eid = event.getAction();
-//                switch (eid) {
-//                    case MotionEvent.ACTION_MOVE:
-//                        PointF mv = new PointF(event.getX() - DownPT.x, event.getY() - DownPT.y);
-//                        bottle.setY((int) (StartPT.y + mv.y));
-//                        StartPT = new PointF(bottle.getX(), bottle.getY());
-//                        break;
-//                    case MotionEvent.ACTION_DOWN:
-//                        DownPT.x = event.getX();
-//                        DownPT.y = event.getY();
-//                        StartPT = new PointF(bottle.getX(), bottle.getY());
-//                        break;
-//                    case MotionEvent.ACTION_UP:
-//                        // Nothing have to do
-//                        break;
-//                    default:
-//                        break;
-//                }
-//                return true;
-//            }
-//        });
+//        gameView = new GameView(this);
+//        setContentView(gameView); //, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
 
-        gameView = new GameView(this);
-        setContentView(gameView);
+//        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relative);
+//        gameView = new GameView(this);
+//        gameView.setLayoutParams(new RelativeLayout.LayoutParams(
+//                        RelativeLayout.LayoutParams.MATCH_PARENT,
+//                        RelativeLayout.LayoutParams.WRAP_CONTENT
+//                ));
+//        relativeLayout.addView(gameView);
+//        setContentView(relativeLayout);
+
+        setContentView(R.layout.activity_main);
+
+
+
+
+
+        start_button = (Button) findViewById(R.id.button_start);
+
+        shake_it = (TextView) findViewById(R.id.shakeIttextView);
+        best_time = (TextView) findViewById(R.id.textView);
+
+        timer = (Chronometer) findViewById(R.id.chronometer);
+
+        bottle = (ImageView) findViewById(R.id.cokeBottle);
+        BOTTLE_START_X = bottle.getX();
+        BOTTLE_START_Y = bottle.getY();
+        Log.d(TAG, "bottle init pos " + BOTTLE_START_X + "," + BOTTLE_START_X);
+        old = BOTTLE_START_X + BOTTLE_START_Y;
+        old_y = BOTTLE_START_Y;
+
+        bottle.setOnTouchListener(new View.OnTouchListener() {
+            private PointF DownPT = new PointF(); // Record Mouse Position When Pressed Down
+            private PointF StartPT = new PointF(); // Record Start Position of 'img'
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int eid = event.getAction();
+                switch (eid) {
+                    case MotionEvent.ACTION_MOVE:
+                        PointF mv = new PointF(event.getX() - DownPT.x, event.getY() - DownPT.y);
+                        bottle.setY((int) (StartPT.y + mv.y));
+                        StartPT = new PointF(bottle.getX(), bottle.getY());
+                        break;
+                    case MotionEvent.ACTION_DOWN:
+                        DownPT.x = event.getX();
+                        DownPT.y = event.getY();
+                        StartPT = new PointF(bottle.getX(), bottle.getY());
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        // Nothing have to do
+                        break;
+                    default:
+                        break;
+                }
+                return true;
+            }
+        });
 
     }
 
