@@ -28,12 +28,16 @@ public class MainActivity extends Activity {
     private TextView best_time, current_time, shake_it;
     private ImageView bottle;
     private Chronometer timer;
-    private float BOTTLE_START_X, BOTTLE_START_Y, BOTTLE_MIN_Y, BOTTLE_MAX_Y;
+    private float BOTTLE_START_X, BOTTLE_START_Y;
+    private final float BOTTLE_MIN_Y = -25;
+    private final float BOTTLE_MAX_Y = 125;
     private long startTime;
     private float distance_moved;
+    private boolean playing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        playing = false;
         super.onCreate(savedInstanceState);
         Global.context = getApplicationContext();
         setContentView(R.layout.activity_main);
@@ -44,9 +48,8 @@ public class MainActivity extends Activity {
         // hide restart/exit
         replay_button = (Button) findViewById(R.id.button_restart);
         exit_button = (Button) findViewById(R.id.button_exit);
-        replay_button.setVisibility(View.GONE);
-        exit_button.setVisibility(View.GONE);
-
+        replay_button.setVisibility(View.INVISIBLE);
+        exit_button.setVisibility(View.INVISIBLE);
 
         // get button references
         start_button = (Button) findViewById(R.id.button_start);
@@ -60,8 +63,6 @@ public class MainActivity extends Activity {
         bottle = (ImageView) findViewById(R.id.cokeBottle);
         BOTTLE_START_X = bottle.getX();
         BOTTLE_START_Y = bottle.getY();
-//        BOTTLE_MIN_Y = BOTTLE_START_Y * 0.5f;
-//        BOTTLE_MAX_Y = BOTTLE_START_Y * 1.5f;
         distance_moved = 0;
         Log.d(TAG, "bottle init pos " + BOTTLE_START_X + "," + BOTTLE_START_X);
 
@@ -90,25 +91,34 @@ public class MainActivity extends Activity {
                     startTime= ctime;
                     distance_moved = 0;
                 }
-                switch (eid) {
-                    case MotionEvent.ACTION_MOVE:
-                        PointF mv = new PointF(event.getX() - DownPT.x, event.getY() - DownPT.y);
-                        bottle.setY((int) (StartPT.y + mv.y));
-                        distance_moved+=Math.abs(mv.y);
-                        StartPT = new PointF(bottle.getX(), bottle.getY());
-                        break;
-                    case MotionEvent.ACTION_DOWN:
-                        DownPT.x = event.getX();
-                        DownPT.y = event.getY();
-                        StartPT = new PointF(bottle.getX(), bottle.getY());
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        // Nothing have to do
-                        Global.backYScale = 0;
-                        break;
-                    default:
-                        break;
+                if (playing) {
+                    switch (eid) {
+                        case MotionEvent.ACTION_MOVE:
+                            PointF mv = new PointF(event.getX() - DownPT.x, event.getY() - DownPT.y);
+                            float newY = (int) (StartPT.y + mv.y);
+                            if (newY < BOTTLE_MIN_Y)
+                                bottle.setY(BOTTLE_MIN_Y + 2);
+                            else if (newY > BOTTLE_MAX_Y)
+                                bottle.setY(BOTTLE_MAX_Y - 2);
+                            else
+                                bottle.setY(newY);
+                            distance_moved += Math.abs(mv.y);
+                            StartPT = new PointF(bottle.getX(), bottle.getY());
+
+                            break;
+                        case MotionEvent.ACTION_DOWN:
+                            DownPT.x = event.getX();
+                            DownPT.y = event.getY();
+                            StartPT = new PointF(bottle.getX(), bottle.getY());
+                            break;
+                        default:
+                            break;
+                    }
                 }
+                if (eid == MotionEvent.ACTION_UP) {
+                        Global.backYScale = 0;
+                }
+
                 return true;
             }
         });
@@ -201,16 +211,17 @@ public class MainActivity extends Activity {
     }
 
     public void onStartClicked(View view) {
+        playing = true;
         start_button.setVisibility(View.INVISIBLE);
         shake_it.setVisibility(View.INVISIBLE);
         exit_button.setVisibility(View.INVISIBLE);
         replay_button.setVisibility(View.INVISIBLE);
-        bottle.setImageDrawable(getDrawable(R.drawable.coke));
         timer.start();
         startTime = System.currentTimeMillis();
     }
 
     private void wonGame() {
+        playing = false;
         long elapsedTime = SystemClock.elapsedRealtime() - timer.getBase();
         timer.stop();
         SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -222,10 +233,13 @@ public class MainActivity extends Activity {
         }
         best_time.setText(getDurationBreakdown(bestTime));
         bottle.setImageDrawable(getDrawable(R.drawable.open));
+        replay_button.setVisibility(View.VISIBLE);
+        exit_button.setVisibility(View.VISIBLE);
+        bottle.setY(BOTTLE_START_Y + 100);
     }
 
     public void onRestartClicked(View v) {
-        onStartClicked(v);
+        recreate();
     }
 
     public void onExitClicked(View v) {
