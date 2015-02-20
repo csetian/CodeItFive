@@ -1,8 +1,11 @@
 package edu.dartmouth.cs.codeitfive;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,19 +23,13 @@ public class MainActivity extends Activity {
     private static final String TAG = "Main Activity";
     private static final int MOVE_UP = 0;
     private static final int MOVE_DOWN = 1;
+    private static final String TIME_KEY = "best_time_key";
     private Button start_button, replay_button, exit_button;
     private TextView best_time, current_time, shake_it;
     private ImageView bottle;
     private Chronometer timer;
-    private float BOTTLE_START_X, BOTTLE_START_Y;
-    private float old;
-    private float old_y;
+    private float BOTTLE_START_X, BOTTLE_START_Y, BOTTLE_MIN_Y, BOTTLE_MAX_Y;
     private long startTime;
-    private PointF previous_point;
-    private int previous_move;
-
-    // openGL stuff
-    private GameView gameView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,17 +37,22 @@ public class MainActivity extends Activity {
         Global.context = getApplicationContext();
         setContentView(R.layout.activity_main);
 
+        SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(this);
+        long bestTime = mPref.getLong(TIME_KEY, Long.MAX_VALUE);
+
         // get button references
         start_button = (Button) findViewById(R.id.button_start);
         shake_it = (TextView) findViewById(R.id.shakeIttextView);
         best_time = (TextView) findViewById(R.id.textView);
+        best_time.setText(Long.toString(bestTime));
         timer = (Chronometer) findViewById(R.id.chronometer);
         bottle = (ImageView) findViewById(R.id.cokeBottle);
         BOTTLE_START_X = bottle.getX();
         BOTTLE_START_Y = bottle.getY();
+//        BOTTLE_MIN_Y = BOTTLE_START_Y * 0.5f;
+//        BOTTLE_MAX_Y = BOTTLE_START_Y * 1.5f;
+
         Log.d(TAG, "bottle init pos " + BOTTLE_START_X + "," + BOTTLE_START_X);
-        old = BOTTLE_START_X + BOTTLE_START_Y;
-        old_y = BOTTLE_START_Y;
 
         bottle.setOnTouchListener(new View.OnTouchListener() {
             private PointF DownPT = new PointF(); // Record Mouse Position When Pressed Down
@@ -117,9 +119,6 @@ public class MainActivity extends Activity {
                             bottle.setY(event.getY());
                         }
 
-
-
-
                         x = event.getRawX();
                         y = event.getRawY();
                         Log.d(TAG, "ACTION MOVE event at pos " +x+","+y);
@@ -142,7 +141,10 @@ public class MainActivity extends Activity {
 //        if (p2.y > (p1.y + 75)){
 //
 //        }
-//    }
+
+
+
+
 
 
     @Override
@@ -169,7 +171,29 @@ public class MainActivity extends Activity {
 
     public void onStartClicked(View view) {
         shake_it.setVisibility(View.INVISIBLE);
+        timer.setBase(SystemClock.elapsedRealtime());
         timer.start();
         startTime = System.currentTimeMillis();
+    }
+
+    private void wonGame() {
+        long elapsedTime = SystemClock.elapsedRealtime() - timer.getBase();
+        timer.stop();
+        SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(this);
+        long bestTime = mPref.getLong(TIME_KEY, Long.MAX_VALUE);
+        if (elapsedTime < bestTime) {
+            SharedPreferences.Editor editor = mPref.edit();
+            editor.putLong(TIME_KEY, elapsedTime);
+            editor.commit();
+        }
+
+    }
+
+    public void onRestartClicked(View v) {
+
+    }
+
+    public void onExitClicked(View v) {
+        finish();
     }
 }
