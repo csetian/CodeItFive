@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.concurrent.TimeUnit;
+
 
 public class MainActivity extends Activity {
     private static final String TAG = "Main Activity";
@@ -38,13 +40,23 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(this);
-        long bestTime = mPref.getLong(TIME_KEY, Long.MAX_VALUE);
+        long bestTime = mPref.getLong(TIME_KEY, 0);
+
+        // hide restart/exit
+        replay_button = (Button) findViewById(R.id.button_restart);
+        exit_button = (Button) findViewById(R.id.button_exit);
+        replay_button.setVisibility(View.GONE);
+        exit_button.setVisibility(View.GONE);
+
 
         // get button references
         start_button = (Button) findViewById(R.id.button_start);
         shake_it = (TextView) findViewById(R.id.shakeIttextView);
-        best_time = (TextView) findViewById(R.id.textView);
-        best_time.setText(Long.toString(bestTime));
+        best_time = (TextView) findViewById(R.id.timerView);
+        if (bestTime > 0)
+            best_time.setText(getDurationBreakdown(bestTime));
+        else
+            best_time.setText("n/a");
         timer = (Chronometer) findViewById(R.id.chronometer);
         bottle = (ImageView) findViewById(R.id.cokeBottle);
         BOTTLE_START_X = bottle.getX();
@@ -170,8 +182,11 @@ public class MainActivity extends Activity {
     }
 
     public void onStartClicked(View view) {
+        start_button.setVisibility(View.INVISIBLE);
         shake_it.setVisibility(View.INVISIBLE);
-        timer.setBase(SystemClock.elapsedRealtime());
+        exit_button.setVisibility(View.INVISIBLE);
+        replay_button.setVisibility(View.INVISIBLE);
+        bottle.setImageDrawable(getDrawable(R.drawable.coke));
         timer.start();
         startTime = System.currentTimeMillis();
     }
@@ -181,19 +196,45 @@ public class MainActivity extends Activity {
         timer.stop();
         SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(this);
         long bestTime = mPref.getLong(TIME_KEY, Long.MAX_VALUE);
-        if (elapsedTime < bestTime) {
+        if (elapsedTime < bestTime || bestTime <= 0) {
             SharedPreferences.Editor editor = mPref.edit();
             editor.putLong(TIME_KEY, elapsedTime);
             editor.commit();
         }
-
+        best_time.setText(getDurationBreakdown(bestTime));
+        bottle.setImageDrawable(getDrawable(R.drawable.open));
     }
 
     public void onRestartClicked(View v) {
-
+        onStartClicked(v);
     }
 
     public void onExitClicked(View v) {
         finish();
+    }
+
+    public static String getDurationBreakdown(long millis)
+    {
+        if(millis < 0)
+        {
+            throw new IllegalArgumentException("Duration must be greater than zero!");
+        }
+
+        long days = TimeUnit.MILLISECONDS.toDays(millis);
+        millis -= TimeUnit.DAYS.toMillis(days);
+        long hours = TimeUnit.MILLISECONDS.toHours(millis);
+        millis -= TimeUnit.HOURS.toMillis(hours);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        millis -= TimeUnit.MINUTES.toMillis(minutes);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+
+        StringBuilder sb = new StringBuilder(64);
+        sb.append(minutes);
+        sb.append(":");
+        sb.append(seconds);
+        sb.append(".");
+        sb.append(millis);
+
+        return(sb.toString());
     }
 }
