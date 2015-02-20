@@ -38,32 +38,13 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Global.context = getApplicationContext();
-
-//        gameView = new GameView(this);
-//        setContentView(gameView); //, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-
-//        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relative);
-//        gameView = new GameView(this);
-//        gameView.setLayoutParams(new RelativeLayout.LayoutParams(
-//                        RelativeLayout.LayoutParams.MATCH_PARENT,
-//                        RelativeLayout.LayoutParams.WRAP_CONTENT
-//                ));
-//        relativeLayout.addView(gameView);
-//        setContentView(relativeLayout);
-
         setContentView(R.layout.activity_main);
 
-
-
-
-
+        // get button references
         start_button = (Button) findViewById(R.id.button_start);
-
         shake_it = (TextView) findViewById(R.id.shakeIttextView);
         best_time = (TextView) findViewById(R.id.textView);
-
         timer = (Chronometer) findViewById(R.id.chronometer);
-
         bottle = (ImageView) findViewById(R.id.cokeBottle);
         BOTTLE_START_X = bottle.getX();
         BOTTLE_START_Y = bottle.getY();
@@ -100,7 +81,6 @@ public class MainActivity extends Activity {
         });
 
     }
-
 
 
                /* Log.d(TAG, "bottle has been touched!");
