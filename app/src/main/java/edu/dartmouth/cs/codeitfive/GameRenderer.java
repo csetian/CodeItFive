@@ -25,7 +25,7 @@ public class GameRenderer implements Renderer{
         }
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-        Global.backYScale = 0.25f;
+
         drawBack(gl);
 
         gl.glEnable(GL10.GL_BLEND);

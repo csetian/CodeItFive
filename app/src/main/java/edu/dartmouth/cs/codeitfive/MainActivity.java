@@ -13,9 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.concurrent.TimeUnit;
@@ -32,6 +30,7 @@ public class MainActivity extends Activity {
     private Chronometer timer;
     private float BOTTLE_START_X, BOTTLE_START_Y, BOTTLE_MIN_Y, BOTTLE_MAX_Y;
     private long startTime;
+    private float distance_moved;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +62,7 @@ public class MainActivity extends Activity {
         BOTTLE_START_Y = bottle.getY();
 //        BOTTLE_MIN_Y = BOTTLE_START_Y * 0.5f;
 //        BOTTLE_MAX_Y = BOTTLE_START_Y * 1.5f;
-
+        distance_moved = 0;
         Log.d(TAG, "bottle init pos " + BOTTLE_START_X + "," + BOTTLE_START_X);
 
         bottle.setOnTouchListener(new View.OnTouchListener() {
@@ -73,10 +72,29 @@ public class MainActivity extends Activity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 int eid = event.getAction();
+                long ctime = System.currentTimeMillis();
+                if (ctime - startTime > 100){
+                    Log.d(TAG, "time difference!");
+                    if (distance_moved > 200){
+                        Global.backYScale+=0.05;
+                        if (Global.backYScale>=.99){
+                            wonGame();
+                        }
+                    }
+                    else{
+                        if (Global.backYScale != 0){
+                            Global.backYScale-=0.05;
+
+                        }
+                    }
+                    startTime= ctime;
+                    distance_moved = 0;
+                }
                 switch (eid) {
                     case MotionEvent.ACTION_MOVE:
                         PointF mv = new PointF(event.getX() - DownPT.x, event.getY() - DownPT.y);
                         bottle.setY((int) (StartPT.y + mv.y));
+                        distance_moved+=Math.abs(mv.y);
                         StartPT = new PointF(bottle.getX(), bottle.getY());
                         break;
                     case MotionEvent.ACTION_DOWN:
